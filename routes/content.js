@@ -31,28 +31,32 @@ try{
 })
 
 router.get('/content', async (req, res) => {
-    const { id } = req.query;
-  
-    try {
+  const { id } = req.query;
+
+  try {
       if (id) {
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-          return res.status(400).json({ message: 'Invalid blog ID format' });
-        }
-  
-        const content = await Content.findById(id);
-        if (!content) {
-          return res.status(404).json({ message: 'content not found' });
-        }
-  
-        return res.status(200).json(blog);
+          if (!mongoose.Types.ObjectId.isValid(id)) {
+              return res.status(400).json({ message: 'Invalid content ID format' });
+          }
+
+          const content = await Content.findById(id);
+          if (!content) {
+              return res.status(404).json({ message: 'Content not found' });
+          }
+
+          return res.status(200).json(content);
       }
-  
+
       const contents = await Content.find();
+      if (contents.length === 0) {
+          return res.status(404).json({ message: 'No content available' });
+      }
+
       res.status(200).json(contents);
-    } catch (error) {
-      res.status(500).json({ message: 'Error fetching blogs', error: error.message });
-    }
-  });
+  } catch (error) {
+      res.status(500).json({ message: 'Error fetching content', error: error.message });
+  }
+});
 
 
   router.delete('/content/:id', async (req, res) => {
